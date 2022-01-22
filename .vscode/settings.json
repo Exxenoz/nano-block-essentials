@@ -1,0 +1,14 @@
+{
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": [
+    "javascript"
+  ],
+  "files.eol": "\n",
+  "editor.fontLigatures": null,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.semanticTokenColorCustomizations": null
+}

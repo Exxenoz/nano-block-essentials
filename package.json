@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "name": "nano-block-essentials",
+  "description": "A block toolkit for Nano using TypeScript.",
+  "files": [
+    "/dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.5",
+    "@types/validator": "^13.1.4",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "eslint": "^7.29.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "2.3.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.4"
+  },
+  "dependencies": {
+    "blakejs": "^1.1.1",
+    "typescript-chained-error": "^1.6.0",
+    "zod": "^3.11.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Exxenoz/nano-block-essentials.git"
+  },
+  "author": "Andreas Titan",
+  "license": "MIT",
+  "keywords": [
+    "nanocurrency",
+    "nano",
+    "block",
+    "essentials",
+    "factory",
+    "crypto",
+    "currency",
+    "cryptocurrency"
+  ]
+}

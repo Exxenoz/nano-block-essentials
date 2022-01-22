@@ -1,0 +1,21 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["prettier", "@typescript-eslint"],
+    "extends": [
+        "google",
+        "prettier",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+        "arrow-body-style": "off",
+        "prefer-arrow-callback": "off",
+        "require-jsdoc": "off",
+        "new-cap": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "camelcase": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+    }
+}
