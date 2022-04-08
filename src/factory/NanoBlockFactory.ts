@@ -6,7 +6,6 @@ import {
   AddressConverter,
   Address,
   KeyConverter,
-  BalanceString,
   Work,
   PrvKey,
   Hash,
@@ -17,7 +16,10 @@ import {
   ZERO_SIGNATURE,
   ZERO_WORK,
   HexConverter,
+  RawAmountString,
+  Amount,
 } from "..";
+import { AmountUnit } from "../model/Amount";
 import { ChangeBlock } from "../model/ChangeBlock";
 import { NanoBlock } from "../model/NanoBlock";
 import { OpenBlock } from "../model/OpenBlock";
@@ -128,7 +130,7 @@ type BlockInput = z.infer<typeof BlockInput>;
 const BlockInput = z.object({
   account: Address.or(PubKey),
   representative: Address.or(PubKey),
-  balance: BalanceString.transform((val) => val.toString()),
+  balance: RawAmountString,
   work: Work.or(z.undefined()),
   prvKey: PrvKey.or(z.undefined()),
 });
@@ -175,7 +177,7 @@ export type HashInput = z.infer<typeof HashInput>;
 export const HashInput = z.object({
   account: Address,
   representative: Address,
-  balance: BalanceString.transform((val) => val.toString()),
+  balance: RawAmountString,
   previous: Hash,
   link: Link,
 });
@@ -420,6 +422,17 @@ export default class NanoBlockFactory {
 
     input = pInput.data;
 
+    const balanceAmount = Amount.parse(input.balance, AmountUnit.Raw);
+    if (balanceAmount == null) {
+      return new InvalidArgumentError(input.balance);
+    }
+
+    const balanceHex = balanceAmount
+      .getInternalValue()
+      .toString(16)
+      .padStart(32, "0")
+      .toUpperCase();
+
     const accountHex = AddressConverter.convertAddressToPubKey(input.account);
     if (accountHex instanceof Error) {
       return new BadCallError(
@@ -436,16 +449,6 @@ export default class NanoBlockFactory {
         AddressConverter.convertAddressToPubKey,
         representativeHex
       );
-    }
-
-    let balanceHex;
-    try {
-      balanceHex = BigInt(input.balance)
-        .toString(16)
-        .padStart(32, "0")
-        .toUpperCase();
-    } catch (err: any) {
-      return new BadCallError(BigInt, err);
     }
 
     const accountByteArray = HexConverter.convertHexToByteArray(accountHex);

@@ -1,6 +1,7 @@
 import { blake2b } from "blakejs";
 import { z } from "zod";
 import Base32Converter from "./conversion/Base32Converter";
+import { Amount, AmountUnit } from "./model/Amount";
 
 export const ADDRESS_PREFIX = "nano_";
 
@@ -17,13 +18,12 @@ export const ZERO_SIGNATURE =
 export const ZERO_WORK = "0000000000000000";
 
 export const MIN_SEED_INDEX = 0;
-export const MAX_SEED_INDEX = 2 ** 32 - 1;
+export const MAX_SEED_INDEX = 4294967295; // 2^32 -1
 
-export const HEIGHT_MIN = 0n;
-export const HEIGHT_MAX = 18446744073709551615n; // 2^64 - 1
+export const HEIGHT_MIN = 0;
+export const HEIGHT_MAX = Number.MAX_SAFE_INTEGER;
 
-export const BALANCE_MIN = 0n;
-export const BALANCE_MAX = 340282366920938463463374607431768211455n; // 2^128 - 1
+export { Amount } from "./model/Amount";
 
 export type Hex = z.infer<typeof Hex>;
 export const Hex = z.string().regex(/^[0-9a-fA-F]+$/);
@@ -103,48 +103,35 @@ export const Subtype = z
   .or(z.literal("epoch"));
 
 export type Height = z.infer<typeof Height>;
-export const Height = z
-  .bigint()
-  .refine((val) => val >= HEIGHT_MIN, {
-    message: `Must be greater than [${HEIGHT_MIN}]!`,
-  })
-  .refine((val) => val <= HEIGHT_MAX, {
-    message: `Must be less than [${HEIGHT_MAX}]!`,
-  });
+export const Height = z.number().min(HEIGHT_MIN).max(HEIGHT_MAX);
 
 export type HeightString = z.infer<typeof HeightString>;
 export const HeightString = z
   .string()
   .regex(/^\d+$/)
-  .transform((val) => BigInt(val))
-  .refine((val) => val >= HEIGHT_MIN, {
+  .refine((val) => Number(val) >= HEIGHT_MIN, {
     message: `Must be greater than [${HEIGHT_MIN}]!`,
   })
-  .refine((val) => val <= HEIGHT_MAX, {
+  .refine((val) => Number(val) <= HEIGHT_MAX, {
     message: `Must be less than [${HEIGHT_MAX}]!`,
   });
 
-export type Balance = z.infer<typeof Balance>;
-export const Balance = z
-  .bigint()
-  .refine((val) => val >= BALANCE_MIN, {
-    message: `Must be greater than [${BALANCE_MIN}]!`,
-  })
-  .refine((val) => val <= BALANCE_MAX, {
-    message: `Must be less than [${BALANCE_MAX}]!`,
+export type RawAmountString = z.infer<typeof RawAmountString>;
+export const RawAmountString = z
+  .string()
+  .refine((val) => Amount.parse(val, AmountUnit.Raw) != null, {
+    message: `Invalid raw amount!`,
   });
 
-export type BalanceString = z.infer<typeof BalanceString>;
-export const BalanceString = z
+export type NanoAmountString = z.infer<typeof NanoAmountString>;
+export const NanoAmountString = z
   .string()
-  .regex(/^\d+$/)
-  .transform((val) => BigInt(val))
-  .refine((val) => val >= BALANCE_MIN, {
-    message: `Must be greater than [${BALANCE_MIN}]!`,
-  })
-  .refine((val) => val <= BALANCE_MAX, {
-    message: `Must be less than [${BALANCE_MAX}]!`,
+  .refine((val) => Amount.parse(val, AmountUnit.Nano) != null, {
+    message: `Invalid nano amount!`,
   });
+
+export type AmountString = z.infer<typeof AmountString>;
+export const AmountString = RawAmountString.or(NanoAmountString);
 
 export type Link = z.infer<typeof Link>;
 export const Link = Hash.or(PubKey);

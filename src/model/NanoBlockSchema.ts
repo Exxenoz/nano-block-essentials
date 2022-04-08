@@ -4,10 +4,10 @@ import {
   Type,
   Subtype,
   Address,
-  BalanceString,
   Link,
   Signature,
   Work,
+  RawAmountString,
 } from "..";
 
 export type NanoBlockSchema = z.infer<typeof NanoBlockSchema>;
@@ -18,7 +18,7 @@ export const NanoBlockSchema = z.object({
   account: Address,
   previous: Hash,
   representative: Address,
-  balance: BalanceString.transform((val) => val.toString()),
+  balance: RawAmountString,
   link: Link,
   link_as_account: Address,
   signature: Signature,
