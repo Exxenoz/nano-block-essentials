@@ -27,7 +27,7 @@ export default class HexConverter {
     const byteArray = [];
 
     for (let i = 0; i < hex.length; i += 2) {
-      byteArray.push(parseInt(hex.substr(i, 2), 16));
+      byteArray.push(parseInt(hex.substring(i, i + 2), 16));
     }
 
     return new Uint8Array(byteArray);

@@ -50,9 +50,9 @@ export default class AddressConverter {
     address = pAddress.data;
 
     const pubKeyByteArray = Base32Converter.decodeNanoBase32ToByteArray(
-      address.substr(
+      address.substring(
         address.length - 52 /* Encoded PubKey */ - 8 /* Checksum */,
-        52
+        address.length - 8
       )
     );
     if (pubKeyByteArray instanceof Error) {

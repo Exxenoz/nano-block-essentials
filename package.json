@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "prepublishOnly" : "npm test",
+    "prepublishOnly": "npm test",
     "prepare": "npm run build",
     "test": "jest --runInBand"
   },
