@@ -1,9 +1,10 @@
-import { blake2b } from "blakejs";
 import { z } from "zod";
-import Base32Converter from "./conversion/Base32Converter";
+import { AddressRegex, AddressSuperRefine } from "./model/Address";
 import { Amount, AmountUnit } from "./model/Amount";
+import { NftAddressRegex } from "./model/NftAddress";
 
 export const ADDRESS_PREFIX = "nano_";
+export const NFT_ADDRESS_PREFIX = "nft_";
 
 export const ZERO_ADDRESS =
   "nano_1111111111111111111111111111111111111111111111111111hifc8npp";
@@ -50,52 +51,14 @@ export const PubKey = Hex.length(64);
 export type Address = z.infer<typeof Address>;
 export const Address = z
   .string()
-  .regex(/^(xrb_|nano_)[13][13-9a-km-uw-z]{59}$/)
-  .superRefine((val, ctx) => {
-    const encodedPubKeyLength = 52;
-    const encodedChecksumLength = 8;
+  .regex(AddressRegex)
+  .superRefine(AddressSuperRefine);
 
-    const pubKeyByteArray = Base32Converter.decodeBase32(
-      val.substring(
-        val.length - encodedPubKeyLength - encodedChecksumLength,
-        val.length - encodedChecksumLength
-      )
-    );
-    if (pubKeyByteArray instanceof Error) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: pubKeyByteArray.message,
-      });
-      return;
-    }
-
-    const checksumByteArray = Base32Converter.decodeBase32(
-      val.substring(val.length - encodedChecksumLength)
-    );
-    if (checksumByteArray instanceof Error) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: checksumByteArray.message,
-      });
-      return;
-    }
-
-    const computedChecksumByteArray = blake2b(
-      pubKeyByteArray,
-      undefined,
-      5
-    ).reverse();
-
-    for (let i = 0; i < checksumByteArray.length; i++) {
-      if (checksumByteArray[i] !== computedChecksumByteArray[i]) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Checksum mismatch",
-        });
-        return;
-      }
-    }
-  });
+export type NftAddress = z.infer<typeof NftAddress>;
+export const NftAddress = z
+  .string()
+  .regex(NftAddressRegex)
+  .superRefine(AddressSuperRefine);
 
 export type Type = z.infer<typeof Type>;
 export const Type = z
