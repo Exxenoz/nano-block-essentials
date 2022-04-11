@@ -31,10 +31,8 @@ export default class AddressConverter {
 
     const checksumByteArray = blake2b(pubKeyByteArray, undefined, 5).reverse();
 
-    const encodedPubKey =
-      Base32Converter.encodeByteArrayToNanoBase32(pubKeyByteArray);
-    const encodedChecksum =
-      Base32Converter.encodeByteArrayToNanoBase32(checksumByteArray);
+    const encodedPubKey = Base32Converter.encodeByteArray(pubKeyByteArray);
+    const encodedChecksum = Base32Converter.encodeByteArray(checksumByteArray);
 
     return prefix + encodedPubKey + encodedChecksum;
   }
@@ -49,10 +47,13 @@ export default class AddressConverter {
 
     address = pAddress.data;
 
-    const pubKeyByteArray = Base32Converter.decodeNanoBase32ToByteArray(
+    const encodedPubKeyLength = 52;
+    const encodedChecksumLength = 8;
+
+    const pubKeyByteArray = Base32Converter.decodeBase32(
       address.substring(
-        address.length - 52 /* Encoded PubKey */ - 8 /* Checksum */,
-        address.length - 8
+        address.length - encodedPubKeyLength - encodedChecksumLength,
+        address.length - encodedChecksumLength
       )
     );
     if (pubKeyByteArray instanceof Error) {

@@ -11,7 +11,7 @@ export class Base32ConverterError extends ChainedError {
 }
 
 export default class Base32Converter {
-  static encodeByteArrayToNanoBase32(input: Uint8Array): string {
+  static encodeByteArray(input: Uint8Array): string {
     const length = input.length;
     const lengthInBits = length * 8;
     const leftover = lengthInBits % 5;
@@ -39,9 +39,7 @@ export default class Base32Converter {
     return output;
   }
 
-  static decodeNanoBase32ToByteArray(
-    input: string
-  ): Uint8Array | Base32ConverterError {
+  static decodeBase32(input: string): Uint8Array | Base32ConverterError {
     const length = input.length;
     const leftover = (length * 5) % 8;
     const offset = leftover === 0 ? 0 : 8 - leftover;

@@ -52,10 +52,13 @@ export const Address = z
   .string()
   .regex(/^(xrb_|nano_)[13][13-9a-km-uw-z]{59}$/)
   .superRefine((val, ctx) => {
-    const pubKeyByteArray = Base32Converter.decodeNanoBase32ToByteArray(
+    const encodedPubKeyLength = 52;
+    const encodedChecksumLength = 8;
+
+    const pubKeyByteArray = Base32Converter.decodeBase32(
       val.substring(
-        val.length - 52 /* Encoded PubKey */ - 8 /* Checksum */,
-        val.length - 8
+        val.length - encodedPubKeyLength - encodedChecksumLength,
+        val.length - encodedChecksumLength
       )
     );
     if (pubKeyByteArray instanceof Error) {
@@ -66,8 +69,8 @@ export const Address = z
       return;
     }
 
-    const checksumByteArray = Base32Converter.decodeNanoBase32ToByteArray(
-      val.substring(val.length - 8 /* Checksum */)
+    const checksumByteArray = Base32Converter.decodeBase32(
+      val.substring(val.length - encodedChecksumLength)
     );
     if (checksumByteArray instanceof Error) {
       ctx.addIssue({
