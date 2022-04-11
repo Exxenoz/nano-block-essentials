@@ -95,7 +95,12 @@ export const Address = z
   });
 
 export type Type = z.infer<typeof Type>;
-export const Type = z.literal("state");
+export const Type = z
+  .literal("state")
+  .or(z.literal("send"))
+  .or(z.literal("receive"))
+  .or(z.literal("open"))
+  .or(z.literal("change"));
 
 export type Subtype = z.infer<typeof Subtype>;
 export const Subtype = z
